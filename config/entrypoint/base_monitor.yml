@@ -1,0 +1,59 @@
+- name: Deploy monitoring script and setup cron with alert
+  hosts: aliyun_proxy1
+  become: yes
+  vars:      
+    monitor_script_path: "/opt/script/base_monitor.sh"
+             
+  tasks:     
+    - name: Ensure script directory exists
+      file:  
+        path: "/opt/script"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+             
+    - name: Copy monitoring script file
+      copy:  
+        src: "file/script/base_monitor.sh"  # 替換為本地腳本文件的完整路徑
+        dest: "{{ monitor_script_path }}"
+        owner: root
+        group: root
+        mode: '0755'
+             
+    - name: Set ownership and permissions on monitoring script
+      file:  
+        path: "{{ monitor_script_path }}"
+        owner: root
+        group: root
+        mode: '0755'
+             
+    - name: Clean and manage monitoring script in crontab
+      block: 
+        - name: Remove all duplicate and invalid entries
+          shell: |
+            sed -i '/\*\/5 \* \* \* \* root \/opt\/script\/base_monitor\.sh/d' /etc/crontab
+            sed -i '/\*\/5 \* \* \* \* root \/bin\/bash \/opt\/script\/base_monitor.sh/d' /etc/crontab
+            sed -i '/# monitor by yo/d' /etc/crontab
+            sed -i '/# BEGIN ANSIBLE MANAGED BLOCK/d' /etc/crontab
+            sed -i '/# END ANSIBLE MANAGED BLOCK/d' /etc/crontab
+            sed -i '/{block}/d' /etc/crontab
+          args:
+            warn: false                                                                                                                                                                              
+             
+    - name: Ensure clean crontab structure
+      lineinfile:
+        path: /etc/crontab
+        regexp: '^$'
+        state: absent
+             
+    - name: Add monitoring script to /etc/crontab
+      blockinfile:
+        path: /etc/crontab
+        block: |
+          # monitor by yo
+          */5 * * * * root /bin/bash /opt/script/base_monitor.sh
+        marker: ""
+        insertafter: EOF
+        create: no
+        backup: yes

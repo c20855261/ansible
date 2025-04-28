@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  ansible:
+    #mage: alpine/ansible
+    #image: quay.io/ansible/ansible-runner
+    image: cytopia/ansible:2.9
+    container_name: ansible
+    stdin_open: true
+    tty: true
+    environment:
+      ANSIBLE_CONFIG: /ansible/conifg/ansible.cfg
+    volumes:
+      - ./config:/ansible/config
+      - ~/.ssh:/root/.ssh:ro
+    command: tail -f /dev/null
+    working_dir: /ansible/config
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"

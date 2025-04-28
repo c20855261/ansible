@@ -1,0 +1,7 @@
+---
+- name: 部署 OpenResty 到遠端伺服器
+  hosts: "{{ host }}"
+  become: yes
+  roles:
+    #- openresty
+    - { role: openresty, openresty_version: "openresty-1.25.tar.gz" }

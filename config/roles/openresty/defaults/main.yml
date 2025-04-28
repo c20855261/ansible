@@ -1,0 +1,7 @@
+---
+openresty_install_path: "/opt/openresty"
+nginx_path: "{{ openresty_install_path }}/nginx"
+nginx_conf_path: "{{ nginx_path }}/conf"
+#openresty_version: "1.25"
+openresty_version: "openresty-1.25.tar.gz"
+#openresty_tarball: "openresty-{{ openresty_version }}.tar.gz"
