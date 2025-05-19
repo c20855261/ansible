@@ -1,6 +1,0 @@
----
-- name: Ping 指定主機
-  hosts: "{{ host }}"
-  tasks:
-    - name: 執行 ping 模組
-      ping:
